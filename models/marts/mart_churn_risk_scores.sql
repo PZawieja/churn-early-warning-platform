@@ -178,7 +178,7 @@ select
         ) >= 40 then 'MEDIUM'
         else 'LOW'
     end as risk_tier,
-    current_timestamp() as scored_at
+    current_timestamp as scored_at
 
 from features as f
 inner join component_scores as cs on f.account_id = cs.account_id

@@ -21,7 +21,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['HIGH', 'MEDIUM', 'LOW']
+              arguments:
+                values: ['HIGH', 'MEDIUM', 'LOW']
       - name: scored_at
         tests:
           - not_null
@@ -38,4 +39,5 @@ models:
       - name: risk_tier
         tests:
           - accepted_values:
-              values: ['HIGH']
+              arguments:
+                values: ['HIGH']

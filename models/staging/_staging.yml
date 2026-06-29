@@ -16,7 +16,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['starter', 'growth', 'enterprise']
+              arguments:
+                values: ['starter', 'growth', 'enterprise']
       - name: mrr
         tests:
           - not_null
@@ -45,8 +46,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_accounts')
-              field: account_id
+              arguments:
+                to: ref('stg_accounts')
+                field: account_id
       - name: user_id
         tests:
           - not_null
@@ -72,13 +74,15 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_accounts')
-              field: account_id
+              arguments:
+                to: ref('stg_accounts')
+                field: account_id
       - name: event_type
         tests:
           - not_null
           - accepted_values:
-              values: ['payment_failure', 'downgrade', 'upgrade', 'renewal', 'cancellation']
+              arguments:
+                values: ['payment_failure', 'downgrade', 'upgrade', 'renewal', 'cancellation']
       - name: event_ts
         tests:
           - not_null
@@ -95,18 +99,21 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_accounts')
-              field: account_id
+              arguments:
+                to: ref('stg_accounts')
+                field: account_id
       - name: severity
         tests:
           - not_null
           - accepted_values:
-              values: ['P1', 'P2', 'P3', 'P4']
+              arguments:
+                values: ['P1', 'P2', 'P3', 'P4']
       - name: status
         tests:
           - not_null
           - accepted_values:
-              values: ['open', 'resolved', 'closed']
+              arguments:
+                values: ['open', 'resolved', 'closed']
       - name: created_at
         tests:
           - not_null
