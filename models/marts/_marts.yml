@@ -51,3 +51,9 @@ models:
           - accepted_values:
               arguments:
                 values: ['HIGH', 'MEDIUM']
+      - name: consecutive_high_weeks
+        tests:
+          - not_null
+      - name: alerted_at
+        tests:
+          - not_null
