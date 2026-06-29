@@ -19,6 +19,7 @@ syntactically valid and structurally sound, ready to wire to real sources.
 - **Scoring weights:** usage 45% · commercial 30% · support 25%
 - **Risk thresholds:** HIGH ≥ 70 · MEDIUM 40–69 · LOW < 40
 - **Incremental strategy** on `int_account_activity_weekly` (unique key: account_id + week_start)
+- **DuckDB for local dev** (Option B) — models run locally via `dbt run`; Snowflake profile stubbed for prod
 
 ---
 
@@ -90,31 +91,39 @@ churn-early-warning-platform/
     Covers a rolling 12-week history; incremental on week_start.
 
     Grain: one row per account_id × week_start (Monday).
+
+    DuckDB-native syntax. Snowflake differences noted inline.
 */
 
 with
 
-spine as (
+-- DuckDB: generate_series; Snowflake: table(generator(rowcount => 12)) + seq4()
+weeks as (
+    select unnest(range(12)) as n
+)
+
+, spine as (
     select
         a.account_id
-        , dateadd('week', -seq4(), date_trunc('week', current_date)) as week_start
+        , (date_trunc('week', current_date) - (w.n * interval '1 week'))::date as week_start
     from {{ ref('stg_accounts') }} a
-    cross join table(generator(rowcount => 12))
+    cross join weeks w
     where a.is_active = true
 )
 
 , product_events as (
     select
         account_id
-        , date_trunc('week', event_ts)               as week_start
-        , count(distinct user_id)                    as wau
-        , count(distinct session_id)                 as session_count
-        , count(*)                                   as event_count
-        , count(distinct feature_name)               as distinct_features_used
-        , max(event_ts)                              as last_event_ts
+        , date_trunc('week', event_ts)::date          as week_start
+        , count(distinct user_id)                     as wau
+        , count(distinct session_id)                  as session_count
+        , count(*)                                    as event_count
+        , count(distinct feature_name)                as distinct_features_used
+        , max(event_ts)                               as last_event_ts
     from {{ ref('stg_product_events') }}
     {% if is_incremental() %}
-        where event_ts >= dateadd('week', -13, date_trunc('week', current_date))
+        -- DuckDB: interval arithmetic; Snowflake: dateadd('week', -13, ...)
+        where event_ts >= date_trunc('week', current_date) - interval '13 weeks'
     {% endif %}
     group by 1, 2
 )
@@ -133,28 +142,33 @@ spine as (
     select
         s.account_id
         , s.week_start
-        , dateadd('day', 6, s.week_start)            as week_end
-        , coalesce(e.wau, 0)                         as wau
-        , coalesce(e.session_count, 0)               as session_count
-        , coalesce(e.event_count, 0)                 as event_count
-        , coalesce(e.distinct_features_used, 0)      as distinct_features_used
+        -- DuckDB: + interval; Snowflake: dateadd('day', 6, ...)
+        , (s.week_start + interval '6 days')::date    as week_end
+        , coalesce(e.wau, 0)                          as wau
+        , coalesce(e.session_count, 0)                as session_count
+        , coalesce(e.event_count, 0)                  as event_count
+        , coalesce(e.distinct_features_used, 0)       as distinct_features_used
         , e.last_event_ts
         , a.seats_contracted
         , case
             when a.seats_contracted > 0
             then round(coalesce(e.wau, 0) / a.seats_contracted, 4)
             else null
-          end                                        as active_user_ratio
+          end                                         as active_user_ratio
+        -- DuckDB: datediff(part, start, end); same in Snowflake
         , datediff(
             'day'
             , e.last_event_ts
-            , dateadd('day', 6, s.week_start)
-          )                                          as days_since_last_event
+            , (s.week_start + interval '6 days')::date
+          )                                           as days_since_last_event
         , a.mrr
         , a.plan_name
         , a.renewal_date
-        , datediff('day', dateadd('day', 6, s.week_start), a.renewal_date)
-                                                     as days_to_renewal
+        , datediff(
+            'day'
+            , (s.week_start + interval '6 days')::date
+            , a.renewal_date
+          )                                           as days_to_renewal
     from spine s
     left join product_events e
         on  e.account_id = s.account_id
@@ -170,15 +184,15 @@ spine as (
             partition by account_id
             order by week_start
             rows between 3 preceding and current row
-          )                                          as wau_rolling_4w
+          )                                           as wau_rolling_4w
         , avg(wau) over (
             partition by account_id
             order by week_start
             rows between 7 preceding and 4 preceding
-          )                                          as wau_rolling_prev_4w
+          )                                           as wau_rolling_prev_4w
         , wau - lag(wau, 1) over (
             partition by account_id order by week_start
-          )                                          as wau_wow_delta
+          )                                           as wau_wow_delta
     from activity
 )
 
@@ -207,8 +221,9 @@ select
             (wau_rolling_4w - wau_rolling_prev_4w) / nullif(wau_rolling_prev_4w, 0)
             , 4
         )
-      end                                            as usage_trend_pct
-    , current_timestamp()                            as updated_at
+      end                                             as usage_trend_pct
+    -- DuckDB: current_timestamp (no parens); Snowflake: current_timestamp()
+    , current_timestamp                               as updated_at
 
 from with_trends
 ```
@@ -480,46 +495,49 @@ order by risk_score desc
 
 All 4 staging models must expose exactly these columns (rename/cast from source as needed):
 
+Types use **DuckDB conventions** (`varchar` → `text` or `varchar`, `timestamp` not `timestamp_ntz`).
+Snowflake equivalent in parentheses where different.
+
 ### stg_accounts
-| column | type | notes |
+| column | type (DuckDB) | notes |
 |---|---|---|
 | account_id | varchar | PK |
 | account_name | varchar | |
 | plan_name | varchar | |
-| mrr | float | monthly recurring revenue USD |
+| mrr | double | monthly recurring revenue USD (Snowflake: float) |
 | seats_contracted | integer | |
 | renewal_date | date | |
 | is_active | boolean | |
-| created_at | timestamp_ntz | |
+| created_at | timestamp | (Snowflake: timestamp_ntz) |
 
 ### stg_product_events
-| column | type | notes |
+| column | type (DuckDB) | notes |
 |---|---|---|
 | event_id | varchar | PK |
 | account_id | varchar | FK → stg_accounts |
 | user_id | varchar | |
 | session_id | varchar | |
 | feature_name | varchar | |
-| event_ts | timestamp_ntz | |
+| event_ts | timestamp | (Snowflake: timestamp_ntz) |
 
 ### stg_billing_events
-| column | type | notes |
+| column | type (DuckDB) | notes |
 |---|---|---|
 | event_id | varchar | PK |
 | account_id | varchar | FK |
 | event_type | varchar | e.g. payment_failure, downgrade, upgrade |
-| amount | float | |
-| event_ts | timestamp_ntz | |
+| amount | double | (Snowflake: float) |
+| event_ts | timestamp | (Snowflake: timestamp_ntz) |
 
 ### stg_support_tickets
-| column | type | notes |
+| column | type (DuckDB) | notes |
 |---|---|---|
 | ticket_id | varchar | PK |
 | account_id | varchar | FK |
 | severity | varchar | P1 / P2 / P3 / P4 |
 | status | varchar | open / resolved / closed |
-| created_at | timestamp_ntz | |
-| resolved_at | timestamp_ntz | nullable |
+| created_at | timestamp | (Snowflake: timestamp_ntz) |
+| resolved_at | timestamp | nullable (Snowflake: timestamp_ntz) |
 
 ---
 
@@ -558,13 +576,22 @@ models:
       +schema: marts
 ```
 
-## profiles.yml (placeholders)
+## profiles.yml (DuckDB dev + Snowflake prod)
 
 ```yaml
 churn_early_warning:
   target: dev
   outputs:
+    # Local dev — runs with dbt-duckdb, no credentials needed
+    # Install: pip install dbt-duckdb
     dev:
+      type: duckdb
+      path: dev.duckdb        # file created in project root
+      threads: 4
+
+    # Production — wire up when Snowflake is available
+    # Install: pip install dbt-snowflake
+    prod:
       type: snowflake
       account: "YOUR_ACCOUNT"
       user: "YOUR_USER"
@@ -572,18 +599,37 @@ churn_early_warning:
       role: "YOUR_ROLE"
       database: "YOUR_DB"
       warehouse: "YOUR_WH"
-      schema: "dev_churn"
+      schema: "churn"
       threads: 4
 ```
+
+> **Note:** `dev.duckdb` is a local file — add it to `.gitignore`.
 
 ---
 
 ## After scaffolding
 
-1. Run `dbt deps` (installs dbt-utils)
-2. Run `dbt compile` — should succeed with 0 errors
-3. Confirm DAG: stg_* → int_account_activity_weekly → int_churn_features → mart_churn_risk_scores
-4. Commit everything: `git add . && git commit -m "feat: Session 1 scaffold — activity spine + scoring model"`
+```bash
+# 1. Install adapters
+pip install dbt-duckdb dbt-utils
+
+# 2. Install dbt packages (dbt_utils)
+dbt deps
+
+# 3. Compile — validates all refs and SQL with no DB connection needed
+dbt compile
+
+# 4. Run against local DuckDB
+dbt run --target dev
+
+# 5. Confirm DAG looks correct
+dbt docs generate && dbt docs serve
+# Expected lineage: stg_* → int_account_activity_weekly → int_churn_features → mart_churn_risk_scores
+
+# 6. Commit
+git add .
+git commit -m "feat: Session 1 scaffold — activity spine + scoring model (DuckDB dev)"
+```
 
 ---
 

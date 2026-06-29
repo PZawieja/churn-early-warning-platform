@@ -1,0 +1,17 @@
+event_id,account_id,event_type,amount,event_ts
+bill_0001,acc_003,payment_failure,400,2026-06-17 10:00:00
+bill_0002,acc_003,payment_failure,400,2026-06-24 10:00:00
+bill_0003,acc_014,payment_failure,1100,2026-06-09 10:00:00
+bill_0004,acc_001,downgrade,-1200,2026-05-15 10:00:00
+bill_0005,acc_002,downgrade,-600,2026-04-30 10:00:00
+bill_0006,acc_012,downgrade,-300,2026-04-10 10:00:00
+bill_0007,acc_008,upgrade,1200,2026-05-30 10:00:00
+bill_0008,acc_011,upgrade,2000,2026-06-14 10:00:00
+bill_0009,acc_007,renewal,2944,2025-10-18 10:00:00
+bill_0010,acc_009,renewal,4675,2025-11-17 10:00:00
+bill_0011,acc_010,renewal,2501,2025-12-24 10:00:00
+bill_0012,acc_013,renewal,2098,2025-07-14 10:00:00
+bill_0013,acc_004,renewal,19200,2025-10-24 10:00:00
+bill_0014,acc_005,renewal,38400,2025-10-27 10:00:00
+bill_0015,acc_006,renewal,4200,2025-06-05 10:00:00
+bill_0016,acc_015,renewal,49200,2025-05-31 10:00:00

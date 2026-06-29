@@ -1,0 +1,32 @@
+version: 2
+
+seeds:
+  - name: accounts
+    description: Seed data — 15 synthetic B2B accounts with varied risk profiles.
+    config:
+      column_types:
+        mrr: double
+        seats_contracted: integer
+        is_active: boolean
+        renewal_date: date
+        created_at: timestamp
+
+  - name: product_events
+    description: Seed data — ~25k product usage events across 12 weeks.
+    config:
+      column_types:
+        event_ts: timestamp
+
+  - name: billing_events
+    description: Seed data — payment failures, downgrades, upgrades, renewals.
+    config:
+      column_types:
+        amount: double
+        event_ts: timestamp
+
+  - name: support_tickets
+    description: Seed data — 23 support tickets with varied severities and statuses.
+    config:
+      column_types:
+        created_at: timestamp
+        resolved_at: timestamp

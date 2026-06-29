@@ -29,15 +29,25 @@ models:
 
   - name: mart_churn_alerts
     description: >
-      STUB (Session 2). HIGH-risk accounts with renewal within 90 days.
-      Grain: one row per account_id.
+      Accounts requiring CSM action this week: HIGH risk + MEDIUM accounts inside
+      their 90-day renewal window. Includes alert_priority (1=CRITICAL → 4=WATCH)
+      and top_risk_driver for routing. Grain: one row per account_id.
     columns:
       - name: account_id
         tests:
           - not_null
           - unique
+      - name: alert_priority
+        tests:
+          - not_null
+      - name: top_risk_driver
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['usage', 'commercial', 'support']
       - name: risk_tier
         tests:
           - accepted_values:
               arguments:
-                values: ['HIGH']
+                values: ['HIGH', 'MEDIUM']

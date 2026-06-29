@@ -16,6 +16,16 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+vars:
+  # DuckDB dev: matches 'path: dev.duckdb' in profiles.yml (dev = filename without extension)
+  # Snowflake prod: override with --vars '{"raw_database": "YOUR_DB", "raw_schema": "raw"}'
+  raw_database: 'dev'
+  raw_schema: 'raw'
+
+seeds:
+  churn_early_warning:
+    +schema: raw       # seeds land in raw schema → matches _sources.yml
+
 models:
   churn_early_warning:
     staging:

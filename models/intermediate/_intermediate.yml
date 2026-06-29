@@ -6,6 +6,12 @@ models:
       Account × week spine with product usage aggregates.
       Covers a rolling 12-week history. Incremental on week_start.
       Grain: one row per account_id × week_start (Monday).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - account_id
+              - week_start
     columns:
       - name: account_id
         tests:
@@ -36,20 +42,33 @@ models:
 
   - name: int_account_support_signals
     description: >
-      STUB (Session 2). Per-account support signal aggregates.
+      Per-account support health aggregates from stg_support_tickets.
       Grain: one row per account_id.
     columns:
       - name: account_id
         tests:
           - not_null
           - unique
+      - name: open_tickets_count
+        tests:
+          - not_null
+      - name: p1_p2_tickets_30d
+        tests:
+          - not_null
 
   - name: int_account_billing_signals
     description: >
-      STUB (Session 2). Per-account billing signal aggregates.
+      Per-account billing health and seat utilization signals.
+      Sources: stg_billing_events, stg_product_events, stg_accounts.
       Grain: one row per account_id.
     columns:
       - name: account_id
         tests:
           - not_null
           - unique
+      - name: had_payment_failure_30d
+        tests:
+          - not_null
+      - name: had_downgrade_90d
+        tests:
+          - not_null
