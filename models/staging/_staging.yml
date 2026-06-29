@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: stg_accounts
+    description: One row per account. Light casting and renaming from raw source.
+    columns:
+      - name: account_id
+        description: Surrogate PK for accounts.
+        tests:
+          - not_null
+          - unique
+      - name: account_name
+        tests:
+          - not_null
+      - name: plan_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['starter', 'growth', 'enterprise']
+      - name: mrr
+        tests:
+          - not_null
+      - name: seats_contracted
+        tests:
+          - not_null
+      - name: renewal_date
+        tests:
+          - not_null
+      - name: is_active
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+
+  - name: stg_product_events
+    description: One row per product usage event.
+    columns:
+      - name: event_id
+        description: PK for product events.
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_accounts')
+              field: account_id
+      - name: user_id
+        tests:
+          - not_null
+      - name: session_id
+        tests:
+          - not_null
+      - name: feature_name
+        tests:
+          - not_null
+      - name: event_ts
+        tests:
+          - not_null
+
+  - name: stg_billing_events
+    description: One row per billing lifecycle event.
+    columns:
+      - name: event_id
+        description: PK for billing events.
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_accounts')
+              field: account_id
+      - name: event_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['payment_failure', 'downgrade', 'upgrade', 'renewal', 'cancellation']
+      - name: event_ts
+        tests:
+          - not_null
+
+  - name: stg_support_tickets
+    description: One row per support ticket.
+    columns:
+      - name: ticket_id
+        description: PK for support tickets.
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_accounts')
+              field: account_id
+      - name: severity
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['P1', 'P2', 'P3', 'P4']
+      - name: status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['open', 'resolved', 'closed']
+      - name: created_at
+        tests:
+          - not_null

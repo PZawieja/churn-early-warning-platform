@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: raw
+    database: "{{ var('raw_database', 'YOUR_DB') }}"
+    schema: "{{ var('raw_schema', 'raw') }}"
+    tables:
+      - name: accounts
+        description: Raw accounts from CRM/billing system.
+      - name: product_events
+        description: Raw product usage events from event stream.
+      - name: billing_events
+        description: Raw billing lifecycle events (payments, upgrades, downgrades).
+      - name: support_tickets
+        description: Raw support tickets from helpdesk.

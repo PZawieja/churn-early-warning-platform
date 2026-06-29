@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: int_account_activity_weekly
+    description: >
+      Account × week spine with product usage aggregates.
+      Covers a rolling 12-week history. Incremental on week_start.
+      Grain: one row per account_id × week_start (Monday).
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+      - name: week_start
+        tests:
+          - not_null
+      - name: wau
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: int_churn_features
+    description: >
+      One row per account: latest-week feature set ready for scoring.
+      Support + billing signals are stubbed until Session 2.
+      Grain: one row per account_id (current week snapshot).
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+      - name: feature_week
+        tests:
+          - not_null
+
+  - name: int_account_support_signals
+    description: >
+      STUB (Session 2). Per-account support signal aggregates.
+      Grain: one row per account_id.
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+
+  - name: int_account_billing_signals
+    description: >
+      STUB (Session 2). Per-account billing signal aggregates.
+      Grain: one row per account_id.
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique

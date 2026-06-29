@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: mart_churn_risk_scores
+    description: >
+      Final churn risk output. One row per account, refreshed weekly.
+      risk_score (0–100) = usage_score * 0.45 + commercial_score * 0.30 + support_score * 0.25.
+      risk_tier: HIGH >= 70 | MEDIUM 40–69 | LOW < 40.
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+      - name: scored_week
+        tests:
+          - not_null
+      - name: risk_score
+        tests:
+          - not_null
+      - name: risk_tier
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HIGH', 'MEDIUM', 'LOW']
+      - name: scored_at
+        tests:
+          - not_null
+
+  - name: mart_churn_alerts
+    description: >
+      STUB (Session 2). HIGH-risk accounts with renewal within 90 days.
+      Grain: one row per account_id.
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+      - name: risk_tier
+        tests:
+          - accepted_values:
+              values: ['HIGH']
