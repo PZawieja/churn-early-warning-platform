@@ -32,7 +32,7 @@ with
 
 scores as (
     select * from {{ ref('mart_churn_risk_scores') }}
-)
+),
 
 /*
     Alert history sourced from SCD2 snapshot.
@@ -47,60 +47,63 @@ scores as (
         Earliest dbt_valid_from where risk_tier = 'HIGH'.
         Stays fixed once set; helps CSMs distinguish new vs chronic risks.
 */
-, alert_history as (
+alert_history as (
     select
-        account_id
-        , min(case when risk_tier = 'HIGH' then dbt_valid_from end)         as first_alerted_at
-        , max(case
+        account_id,
+        min(case when risk_tier = 'HIGH' then dbt_valid_from end)
+            as first_alerted_at,
+        max(case
             when risk_tier = 'HIGH' and dbt_valid_to is null
-            then datediff('week', dbt_valid_from::date, current_date) + 1
+                then datediff('week', dbt_valid_from::date, current_date) + 1
             else 0
-          end)                                                               as consecutive_high_weeks
+        end) as consecutive_high_weeks
     from {{ ref('snp_churn_risk_scores') }}
     group by 1
-)
+),
 
-, alerts as (
+alerts as (
     select
-        s.account_id
-        , s.scored_week
-        , s.plan_name
-        , s.mrr
-        , s.renewal_date
-        , s.days_to_renewal
-        , s.is_in_renewal_window
-        , s.risk_score
-        , s.risk_tier
-        , s.usage_score
-        , s.commercial_score
-        , s.support_score
-        , s.wau
-        , s.usage_trend_pct
-        , s.active_user_ratio
-        , s.distinct_features_used
-        , s.days_since_last_event
-        , s.had_payment_failure_30d
-        , s.p1_p2_tickets_30d
-        , case
+        s.account_id,
+        s.scored_week,
+        s.plan_name,
+        s.mrr,
+        s.renewal_date,
+        s.days_to_renewal,
+        s.is_in_renewal_window,
+        s.risk_score,
+        s.risk_tier,
+        s.usage_score,
+        s.commercial_score,
+        s.support_score,
+        s.wau,
+        s.usage_trend_pct,
+        s.active_user_ratio,
+        s.distinct_features_used,
+        s.days_since_last_event,
+        s.had_payment_failure_30d,
+        s.p1_p2_tickets_30d,
+        h.first_alerted_at,
+        case
             when s.risk_tier = 'HIGH' and s.days_to_renewal <= 14 then 1
             when s.risk_tier = 'HIGH' and s.days_to_renewal <= 30 then 2
-            when s.risk_tier = 'HIGH'                              then 3
+            when s.risk_tier = 'HIGH' then 3
             when s.risk_tier = 'MEDIUM' and s.is_in_renewal_window then 4
-          end                                                                as alert_priority
-        , case
-            when greatest(s.usage_score, s.commercial_score, s.support_score)
-                = s.usage_score      then 'usage'
-            when greatest(s.usage_score, s.commercial_score, s.support_score)
-                = s.commercial_score then 'commercial'
-            else                          'support'
-          end                                                                as top_risk_driver
+        end as alert_priority,
         -- History from snapshot
-        , coalesce(h.consecutive_high_weeks, 0)                             as consecutive_high_weeks
-        , h.first_alerted_at
-        , current_timestamp                                                  as alerted_at
+        case
+            when
+                greatest(s.usage_score, s.commercial_score, s.support_score)
+                = s.usage_score then 'usage'
+            when
+                greatest(s.usage_score, s.commercial_score, s.support_score)
+                = s.commercial_score then 'commercial'
+            else 'support'
+        end as top_risk_driver,
+        coalesce(h.consecutive_high_weeks, 0) as consecutive_high_weeks,
+        current_timestamp as alerted_at
 
-    from scores s
-    left join alert_history h on h.account_id = s.account_id
+    from scores as s
+    left join alert_history as h on s.account_id = h.account_id
     where
         s.risk_tier = 'HIGH'
         or (s.risk_tier = 'MEDIUM' and s.is_in_renewal_window)

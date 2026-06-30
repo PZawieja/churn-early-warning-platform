@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Churn Early Warning — Risk Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#07090f;
+  --s1:#0e1117;
+  --s2:#131720;
+  --s3:#1a2030;
+  --border:rgba(255,255,255,0.055);
+  --border-h:rgba(255,255,255,0.11);
+  --txt:#dde3f0;
+  --muted:#5a6478;
+  --muted-l:#8899b0;
+  --high:#f04040;
+  --high-bg:rgba(240,64,64,0.10);
+  --high-b:rgba(240,64,64,0.28);
+  --med:#f5a623;
+  --med-bg:rgba(245,166,35,0.10);
+  --med-b:rgba(245,166,35,0.28);
+  --low:#2ecc81;
+  --low-bg:rgba(46,204,129,0.08);
+  --low-b:rgba(46,204,129,0.22);
+  --acc:#7c6cf0;
+  --acc-l:rgba(124,108,240,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding:28px 32px;font-size:13px}
+a{color:var(--muted-l);text-decoration:none}
+a:hover{color:var(--txt)}
+
+/* ── HEADER ── */
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.hdr-left{display:flex;align-items:center;gap:14px}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 3px rgba(124,108,240,0.2),0 0 16px rgba(124,108,240,0.5);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 3px rgba(124,108,240,0.2),0 0 16px rgba(124,108,240,0.5)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(124,108,240,0.08),0 0 8px rgba(124,108,240,0.3)}}
+.hdr-brand h1{font-size:17px;font-weight:700;letter-spacing:-.4px;color:#eef1f8}
+.hdr-brand p{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:.3px}
+.hdr-meta{text-align:right}
+.hdr-week{font-size:13px;font-weight:500;color:var(--muted-l)}
+.hdr-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.pipeline-tag{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--muted);letter-spacing:.2px;margin-top:6px}
+
+/* ── KPI CARDS ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;animation:fadeUp .4s ease both}
+.kpi:hover{border-color:var(--border-h);transform:translateY(-1px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0}
+.kpi.red::before{background:linear-gradient(90deg,var(--high),transparent)}
+.kpi.amber::before{background:linear-gradient(90deg,var(--med),transparent)}
+.kpi.green::before{background:linear-gradient(90deg,var(--low),transparent)}
+.kpi.purple::before{background:linear-gradient(90deg,var(--acc),transparent)}
+.kpi-label{font-size:10px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.kpi-val{font-size:34px;font-weight:800;letter-spacing:-2px;line-height:1}
+.kpi.red .kpi-val{color:var(--high)}
+.kpi.amber .kpi-val{color:var(--med)}
+.kpi.green .kpi-val{color:var(--low)}
+.kpi.purple .kpi-val{color:var(--acc)}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:6px}
+.kpi:nth-child(1){animation-delay:.05s}.kpi:nth-child(2){animation-delay:.10s}
+.kpi:nth-child(3){animation-delay:.15s}.kpi:nth-child(4){animation-delay:.20s}
+
+/* ── CHARTS ── */
+.charts-row{display:grid;grid-template-columns:260px 1fr;gap:14px;margin-bottom:20px;animation:fadeUp .4s .25s ease both}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+.card-title{font-size:10px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+
+/* donut */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:18px}
+.donut-legend{width:100%}
+.leg-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)}
+.leg-item:last-child{border-bottom:none}
+.leg-left{display:flex;align-items:center;gap:8px;font-size:12px}
+.leg-dot{width:7px;height:7px;border-radius:2px}
+.leg-count{font-size:14px;font-weight:700}
+
+/* scatter */
+.scatter-note{font-size:10px;color:var(--muted);margin-top:10px;text-align:center}
+
+/* ── TABLES ── */
+.table-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;animation:fadeUp .4s .3s ease both}
+.table-hdr{padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.table-hdr-left{display:flex;align-items:center;gap:10px}
+.tbl-title{font-size:10px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:var(--muted)}
+.badge-pill{background:var(--acc-l);color:var(--acc);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600}
+.tbl-hint{font-size:11px;color:var(--muted)}
+
+table{width:100%;border-collapse:collapse}
+thead th{padding:9px 14px;text-align:left;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;background:var(--s2);border-bottom:1px solid var(--border);white-space:nowrap}
+thead th.num{text-align:right}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,0.018)}
+td{padding:11px 14px;vertical-align:middle}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.urgent{color:var(--high);font-weight:600}
+
+/* Account ID */
+.account-id{font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace;font-size:12px;color:var(--muted-l);letter-spacing:-.3px}
+
+/* Priority badge */
+.pri-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
+.p1{background:rgba(240,64,64,0.14);color:#f87171;border:1px solid rgba(240,64,64,0.3)}
+.p2{background:rgba(245,166,35,0.12);color:#fbbf24;border:1px solid rgba(245,166,35,0.3)}
+.p3{background:rgba(240,64,64,0.07);color:#fca5a5;border:1px solid rgba(240,64,64,0.18)}
+.p4{background:rgba(234,179,8,0.08);color:#ca8a04;border:1px solid rgba(234,179,8,0.18)}
+
+/* Tier badge */
+.tier-badge{padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.4px}
+.tier-high{background:var(--high-bg);color:var(--high);border:1px solid var(--high-b)}
+.tier-medium{background:var(--med-bg);color:var(--med);border:1px solid var(--med-b)}
+.tier-low{background:var(--low-bg);color:var(--low);border:1px solid var(--low-b)}
+
+/* Plan badge */
+.plan-badge{font-size:11px;font-weight:500}
+
+/* Score bar */
+.score-bar-wrap{display:flex;align-items:center;gap:10px;min-width:120px}
+.score-bar{flex:1;border-radius:3px;background:var(--s3);overflow:hidden}
+.score-fill{height:100%;background:linear-gradient(90deg,#2ecc81 0%,#f5a623 55%,#f04040 100%);border-radius:3px}
+.score-num{font-weight:700;font-size:13px;min-width:28px;text-align:right;color:var(--txt)}
+
+/* Component breakdown */
+.breakdown-bar{display:flex;height:5px;border-radius:3px;overflow:hidden;width:72px;gap:1px;cursor:help}
+.bd-u{background:#7c6cf0}.bd-c{background:#f5a623}.bd-s{background:#22b8cf}
+
+/* Driver badge */
+.driver-badge{font-size:11px;color:var(--muted-l);background:var(--s2);border:1px solid var(--border);padding:2px 8px;border-radius:5px;white-space:nowrap}
+
+/* Trend */
+.trend-up{color:var(--low)}.trend-down{color:var(--high)}.muted{color:var(--muted)}.muted-light{color:var(--muted-l)}
+
+/* Legend row (below tables) */
+.legend-row{display:flex;gap:18px;padding:10px 24px;border-top:1px solid var(--border);background:var(--s2)}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted)}
+.swatch{width:10px;height:4px;border-radius:2px}
+
+/* Footer */
+.footer{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+
+/* Animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="live-dot"></div>
+    <div class="hdr-brand">
+      <h1>Churn Early Warning</h1>
+      <p>Risk Intelligence Dashboard</p>
+    </div>
+  </div>
+  <div class="hdr-meta">
+    <div class="hdr-week">Week of 2026-06-29</div>
+    <div class="hdr-sub">Generated 2026-06-30 09:35</div>
+    <div class="pipeline-tag">⚙ dbt pipeline &middot; DuckDB &middot; Snowflake-ready</div>
+  </div>
+</div>
+
+<!-- ── KPI CARDS ── -->
+<div class="kpi-row">
+  <div class="kpi red">
+    <div class="kpi-label">Accounts at Risk</div>
+    <div class="kpi-val">1</div>
+    <div class="kpi-sub">require CSM action this week</div>
+  </div>
+  <div class="kpi amber">
+    <div class="kpi-label">MRR Exposed</div>
+    <div class="kpi-val">$1.2K</div>
+    <div class="kpi-sub">across risk accounts</div>
+  </div>
+  <div class="kpi red">
+    <div class="kpi-label">HIGH Tier</div>
+    <div class="kpi-val">0</div>
+    <div class="kpi-sub">score &ge; 70 &middot; immediate action</div>
+  </div>
+  <div class="kpi purple">
+    <div class="kpi-label">Avg Risk Score</div>
+    <div class="kpi-val">26</div>
+    <div class="kpi-sub">across all 15 accounts</div>
+  </div>
+</div>
+
+<!-- ── CHARTS ── -->
+<div class="charts-row">
+  <div class="card">
+    <div class="card-title">Risk Distribution</div>
+    <div class="donut-wrap">
+      <canvas id="donut" width="180" height="180"></canvas>
+      <div class="donut-legend">
+        <div class="leg-item">
+          <div class="leg-left"><div class="leg-dot" style="background:var(--high)"></div><span>HIGH</span></div>
+          <span class="leg-count" style="color:var(--high)">0</span>
+        </div>
+        <div class="leg-item">
+          <div class="leg-left"><div class="leg-dot" style="background:var(--med)"></div><span>MEDIUM</span></div>
+          <span class="leg-count" style="color:var(--med)">1</span>
+        </div>
+        <div class="leg-item">
+          <div class="leg-left"><div class="leg-dot" style="background:var(--low)"></div><span>LOW</span></div>
+          <span class="leg-count" style="color:var(--low)">14</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Risk Score vs Days to Renewal &mdash; bubble size = MRR</div>
+    <canvas id="scatter" style="max-height:240px"></canvas>
+    <div class="scatter-note">
+      Danger zone (top-left): high risk + imminent renewal = immediate CSM call
+    </div>
+  </div>
+</div>
+
+<!-- ── ALERT PRIORITY QUEUE ── -->
+<div class="table-card">
+  <div class="table-hdr">
+    <div class="table-hdr-left">
+      <span class="tbl-title">Priority Queue</span>
+      <span class="badge-pill">1 accounts</span>
+    </div>
+    <span class="tbl-hint">sorted: priority &rarr; risk score</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Priority</th>
+        <th>Account</th>
+        <th>Plan</th>
+        <th class="num">MRR</th>
+        <th class="num">Renewal</th>
+        <th>Risk Score</th>
+        <th>Top Driver</th>
+        <th>U / C / S</th>
+        <th>Usage Trend</th>
+        <th>Seat Util</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr>
+      <td><span class="pri-badge p4">④ WATCH</span></td>
+      <td><span class="account-id">acc_002</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td class="num">$1.2K</td>
+      <td class="num urgent">16d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:63.83%"></div>
+      </div>
+      <span class="score-num">64</span>
+    </div></td>
+      <td><span class="driver-badge">📊 usage</span></td>
+      <td><div class="breakdown-bar" title="Usage 100 / Commercial 48 / Support 18">
+      <div class="bd-u" style="width:60.30271965265634%"></div>
+      <div class="bd-c" style="width:28.64379183501176%"></div>
+      <div class="bd-s" style="width:11.053488512331906%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 50%</span></td>
+      <td><span class="trend-down">0%</span></td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="legend-row">
+    <div class="legend-item"><div class="swatch" style="background:#7c6cf0"></div>Usage score</div>
+    <div class="legend-item"><div class="swatch" style="background:#f5a623"></div>Commercial score</div>
+    <div class="legend-item"><div class="swatch" style="background:#22b8cf"></div>Support score</div>
+  </div>
+</div>
+
+<!-- ── ALL ACCOUNTS ── -->
+<div class="table-card">
+  <div class="table-hdr">
+    <div class="table-hdr-left">
+      <span class="tbl-title">All Accounts</span>
+      <span class="badge-pill">15</span>
+    </div>
+    <span class="tbl-hint">full scoring output &middot; mart_churn_risk_scores</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Account</th>
+        <th>Plan</th>
+        <th class="num">MRR</th>
+        <th>Tier</th>
+        <th>Risk Score</th>
+        <th class="num">Usage</th>
+        <th class="num">Commercial</th>
+        <th class="num">Support</th>
+        <th class="num">Days to Renewal</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr>
+      <td><span class="account-id">acc_002</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td class="num">$1.2K</td>
+      <td><span class="tier-badge tier-medium">MEDIUM</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:63.83%"></div>
+      </div>
+      <span class="score-num">64</span>
+    </div></td>
+      <td class="num muted-light">100</td>
+      <td class="num muted-light">48</td>
+      <td class="num muted-light">18</td>
+      <td class="num urgent">16d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_003</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
+      <td class="num">$400.0</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:36.71%"></div>
+      </div>
+      <span class="score-num">37</span>
+    </div></td>
+      <td class="num muted-light">22</td>
+      <td class="num muted-light">65</td>
+      <td class="num muted-light">28</td>
+      <td class="num urgent">12d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_006</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
+      <td class="num">$350.0</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:32.08%"></div>
+      </div>
+      <span class="score-num">32</span>
+    </div></td>
+      <td class="num muted-light">22</td>
+      <td class="num muted-light">29</td>
+      <td class="num muted-light">53</td>
+      <td class="num muted">71d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_014</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td class="num">$1.1K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:31.04%"></div>
+      </div>
+      <span class="score-num">31</span>
+    </div></td>
+      <td class="num muted-light">22</td>
+      <td class="num muted-light">60</td>
+      <td class="num muted-light">12</td>
+      <td class="num urgent">29d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_001</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
+      <td class="num">$4.8K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:26.77%"></div>
+      </div>
+      <span class="score-num">27</span>
+    </div></td>
+      <td class="num muted-light">9</td>
+      <td class="num muted-light">52</td>
+      <td class="num muted-light">28</td>
+      <td class="num urgent">4d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_011</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
+      <td class="num">$6.0K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:26.08%"></div>
+      </div>
+      <span class="score-num">26</span>
+    </div></td>
+      <td class="num muted-light">35</td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">23</td>
+      <td class="num muted">214d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_008</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
+      <td class="num">$5.2K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:26.08%"></div>
+      </div>
+      <span class="score-num">26</span>
+    </div></td>
+      <td class="num muted-light">35</td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">23</td>
+      <td class="num muted">139d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_012</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td class="num">$870.0</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:23.25%"></div>
+      </div>
+      <span class="score-num">23</span>
+    </div></td>
+      <td class="num muted-light">22</td>
+      <td class="num muted-light">44</td>
+      <td class="num muted-light">0</td>
+      <td class="num muted">84d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_015</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
+      <td class="num">$4.1K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:23.17%"></div>
+      </div>
+      <span class="score-num">23</span>
+    </div></td>
+      <td class="num muted-light">22</td>
+      <td class="num muted-light">34</td>
+      <td class="num muted-light">12</td>
+      <td class="num muted">49d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_005</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
+      <td class="num">$3.2K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:20.25%"></div>
+      </div>
+      <span class="score-num">20</span>
+    </div></td>
+      <td class="num muted-light">22</td>
+      <td class="num muted-light">34</td>
+      <td class="num muted-light">0</td>
+      <td class="num muted">56d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_013</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
+      <td class="num">$310.0</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:19.9%"></div>
+      </div>
+      <span class="score-num">20</span>
+    </div></td>
+      <td class="num muted-light">21</td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">23</td>
+      <td class="num muted">294d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_009</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
+      <td class="num">$290.0</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:19.9%"></div>
+      </div>
+      <span class="score-num">20</span>
+    </div></td>
+      <td class="num muted-light">21</td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">23</td>
+      <td class="num muted">189d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_007</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td class="num">$980.0</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:17.08%"></div>
+      </div>
+      <span class="score-num">17</span>
+    </div></td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">23</td>
+      <td class="num muted">109d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_004</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td class="num">$1.6K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:16.4%"></div>
+      </div>
+      <span class="score-num">16</span>
+    </div></td>
+      <td class="num muted-light">9</td>
+      <td class="num muted-light">26</td>
+      <td class="num muted-light">18</td>
+      <td class="num muted">42d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_010</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td class="num">$1.4K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:14.27%"></div>
+      </div>
+      <span class="score-num">14</span>
+    </div></td>
+      <td class="num muted-light">9</td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">23</td>
+      <td class="num muted">169d</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="footer">
+  <span>Churn Early Warning Platform &mdash; dbt + DuckDB + Snowflake</span>
+  <a href="https://github.com/PZawieja/churn-early-warning-platform" target="_blank">
+    github.com/PZawieja/churn-early-warning-platform
+  </a>
+</div>
+
+<script>
+// ── Donut chart ──
+const donutCtx = document.getElementById('donut');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['HIGH', 'MEDIUM', 'LOW'],
+    datasets: [{
+      data: [0, 1, 14],
+      backgroundColor: ['rgba(240,64,64,0.8)','rgba(245,166,35,0.8)','rgba(46,204,129,0.7)'],
+      borderColor: ['#f04040','#f5a623','#2ecc81'],
+      borderWidth: 1,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#131720',
+        borderColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1,
+        titleColor: '#dde3f0',
+        bodyColor: '#8899b0',
+        callbacks: { label: ctx => `  ${ctx.label}: ${ctx.parsed} accounts` }
+      }
+    }
+  }
+});
+
+// ── Bubble / scatter chart ──
+const scatterCtx = document.getElementById('scatter');
+const pts = [{"id": "acc_002", "days": 16, "score": 63.8, "tier": "MEDIUM", "mrr": 1200.0, "r": 4}, {"id": "acc_003", "days": 12, "score": 36.7, "tier": "LOW", "mrr": 400.0, "r": 4}, {"id": "acc_006", "days": 71, "score": 32.1, "tier": "LOW", "mrr": 350.0, "r": 4}, {"id": "acc_014", "days": 29, "score": 31.0, "tier": "LOW", "mrr": 1100.0, "r": 4}, {"id": "acc_001", "days": 4, "score": 26.8, "tier": "LOW", "mrr": 4800.0, "r": 4}, {"id": "acc_011", "days": 214, "score": 26.1, "tier": "LOW", "mrr": 6000.0, "r": 4}, {"id": "acc_008", "days": 139, "score": 26.1, "tier": "LOW", "mrr": 5200.0, "r": 4}, {"id": "acc_012", "days": 84, "score": 23.2, "tier": "LOW", "mrr": 870.0, "r": 4}, {"id": "acc_015", "days": 49, "score": 23.2, "tier": "LOW", "mrr": 4100.0, "r": 4}, {"id": "acc_005", "days": 56, "score": 20.2, "tier": "LOW", "mrr": 3200.0, "r": 4}, {"id": "acc_013", "days": 294, "score": 19.9, "tier": "LOW", "mrr": 310.0, "r": 4}, {"id": "acc_009", "days": 189, "score": 19.9, "tier": "LOW", "mrr": 290.0, "r": 4}, {"id": "acc_007", "days": 109, "score": 17.1, "tier": "LOW", "mrr": 980.0, "r": 4}, {"id": "acc_004", "days": 42, "score": 16.4, "tier": "LOW", "mrr": 1600.0, "r": 4}, {"id": "acc_010", "days": 169, "score": 14.3, "tier": "LOW", "mrr": 1450.0, "r": 4}];
+
+const dangerZone = {
+  id: 'dangerZone',
+  beforeDraw(chart) {
+    const { ctx, scales: { x, y } } = chart;
+    if (!x || !y) return;
+    const x0 = x.left, x1 = x.getPixelForValue(90);
+    const y0 = y.getPixelForValue(100), y1 = y.getPixelForValue(50);
+    ctx.save();
+    ctx.fillStyle = 'rgba(240,64,64,0.04)';
+    ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    ctx.strokeStyle = 'rgba(240,64,64,0.18)';
+    ctx.setLineDash([4, 4]);
+    ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    ctx.restore();
+  }
+};
+
+Chart.register(dangerZone);
+
+new Chart(scatterCtx, {
+  type: 'bubble',
+  data: {
+    datasets: [
+      {
+        label: 'HIGH',
+        data: pts.filter(d => d.tier === 'HIGH').map(d => ({x: d.days, y: d.score, r: d.r, id: d.id, mrr: d.mrr})),
+        backgroundColor: 'rgba(240,64,64,0.65)',
+        borderColor: '#f04040',
+        borderWidth: 1.5,
+      },
+      {
+        label: 'MEDIUM',
+        data: pts.filter(d => d.tier === 'MEDIUM').map(d => ({x: d.days, y: d.score, r: d.r, id: d.id, mrr: d.mrr})),
+        backgroundColor: 'rgba(245,166,35,0.65)',
+        borderColor: '#f5a623',
+        borderWidth: 1.5,
+      },
+      {
+        label: 'LOW',
+        data: pts.filter(d => d.tier === 'LOW').map(d => ({x: d.days, y: d.score, r: d.r, id: d.id, mrr: d.mrr})),
+        backgroundColor: 'rgba(46,204,129,0.45)',
+        borderColor: '#2ecc81',
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: {
+        min: 0, max: 240,
+        title: { display: true, text: 'Days to Renewal', color: '#5a6478', font: { size: 11 } },
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#5a6478', font: { size: 11 } }
+      },
+      y: {
+        min: 0, max: 100,
+        title: { display: true, text: 'Risk Score', color: '#5a6478', font: { size: 11 } },
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#5a6478', font: { size: 11 } }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: { color: '#8899b0', font: { size: 11 }, boxWidth: 10, padding: 16 }
+      },
+      tooltip: {
+        backgroundColor: '#131720',
+        borderColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1,
+        titleColor: '#dde3f0',
+        bodyColor: '#8899b0',
+        callbacks: {
+          title: items => items[0].raw.id,
+          label: item => [
+            `  Score: ${item.raw.y}`,
+            `  Renewal in: ${item.raw.x}d`,
+            `  MRR: $${item.raw.mrr.toLocaleString()}`
+          ]
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

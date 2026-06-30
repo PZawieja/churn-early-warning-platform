@@ -63,6 +63,32 @@ flowchart LR
 
 ---
 
+## Dashboard
+
+A self-contained HTML dashboard ships with the project. No server required — open in any browser.
+
+```bash
+# Preview with built-in sample data (no DuckDB needed)
+python scripts/generate_dashboard.py --sample
+
+# Real data (after dbt seed + run + snapshot)
+python scripts/generate_dashboard.py --db dev.duckdb
+```
+
+### Overview — KPIs + risk distribution + renewal timeline
+
+![Dashboard overview](blog_shot_overview.png)
+
+### Priority Queue — CSM action queue with alert tier, score breakdown, and usage signals
+
+![Priority queue](blog_shot_priority_queue.png)
+
+### All Accounts — full scored account list with tier badges
+
+![All accounts](blog_shot_all_accounts.png)
+
+---
+
 ## Quick start (DuckDB local dev)
 
 ### Prerequisites
@@ -120,7 +146,8 @@ churn-early-warning-platform/
 ├── snapshots/            # SCD2 history of risk score changes
 ├── seeds/                # Synthetic CSV data for local dev/testing
 ├── scripts/
-│   └── notify_slack.py   # Weekly Slack digest (reads mart_churn_alerts)
+│   ├── generate_dashboard.py  # HTML dashboard generator (--sample or --db)
+│   └── notify_slack.py        # Weekly Slack digest (reads mart_churn_alerts)
 ├── tests/generic/        # Custom generic tests
 ├── dbt_project.yml
 ├── profiles.yml          # DuckDB dev + Snowflake prod
@@ -166,5 +193,5 @@ Syntax differences (DuckDB → Snowflake) are documented inline in each model.
 | 2 | ✅ Done | Real support + billing signal models |
 | 3 | ✅ Done | Seeds, schema tests, Slack notification script |
 | 4 | ✅ Done | SCD2 snapshot, alert history columns, README |
-| 5 | 🔲 Planned | Dashboard (Evidence.dev or HTML) |
+| 5 | ✅ Done | Self-contained HTML dashboard + Python generator |
 | 6 | 🔲 Planned | ML upgrade: logistic regression on feature set |
