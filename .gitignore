@@ -4,4 +4,3 @@ logs/
 .env
 profiles.yml
 dev.duckdb
-scripts/churn_model.pkl
