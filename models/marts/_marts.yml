@@ -27,6 +27,34 @@ models:
         tests:
           - not_null
 
+  - name: mart_churn_risk_scores_ml
+    description: >
+      Side-by-side ML vs rule-based churn scores. One row per account.
+      Requires ml_output.ml_predictions (from ml_pipeline.py score) before dbt run.
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
+      - name: risk_score_ml
+        tests:
+          - not_null
+      - name: risk_tier_ml
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['HIGH', 'MEDIUM', 'LOW']
+      - name: churn_probability
+        tests:
+          - not_null
+      - name: tier_agreement
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['AGREE', 'ML_HIGHER', 'ML_LOWER', 'DIFFER']
+
   - name: mart_churn_alerts
     description: >
       Accounts requiring CSM action this week: HIGH risk + MEDIUM accounts inside
