@@ -160,8 +160,8 @@ td.urgent{color:var(--high);font-weight:600}
     </div>
   </div>
   <div class="hdr-meta">
-    <div class="hdr-week">Week of 2026-06-29</div>
-    <div class="hdr-sub">Generated 2026-06-30 09:35</div>
+    <div class="hdr-week">Week of June 30, 2026</div>
+    <div class="hdr-sub">Generated 2026-06-30 18:01</div>
     <div class="pipeline-tag">⚙ dbt pipeline &middot; DuckDB &middot; Snowflake-ready</div>
   </div>
 </div>
@@ -170,22 +170,22 @@ td.urgent{color:var(--high);font-weight:600}
 <div class="kpi-row">
   <div class="kpi red">
     <div class="kpi-label">Accounts at Risk</div>
-    <div class="kpi-val">1</div>
+    <div class="kpi-val">9</div>
     <div class="kpi-sub">require CSM action this week</div>
   </div>
   <div class="kpi amber">
     <div class="kpi-label">MRR Exposed</div>
-    <div class="kpi-val">$1.2K</div>
+    <div class="kpi-val">$40.6K</div>
     <div class="kpi-sub">across risk accounts</div>
   </div>
   <div class="kpi red">
     <div class="kpi-label">HIGH Tier</div>
-    <div class="kpi-val">0</div>
+    <div class="kpi-val">3</div>
     <div class="kpi-sub">score &ge; 70 &middot; immediate action</div>
   </div>
   <div class="kpi purple">
     <div class="kpi-label">Avg Risk Score</div>
-    <div class="kpi-val">26</div>
+    <div class="kpi-val">44</div>
     <div class="kpi-sub">across all 15 accounts</div>
   </div>
 </div>
@@ -199,15 +199,15 @@ td.urgent{color:var(--high);font-weight:600}
       <div class="donut-legend">
         <div class="leg-item">
           <div class="leg-left"><div class="leg-dot" style="background:var(--high)"></div><span>HIGH</span></div>
-          <span class="leg-count" style="color:var(--high)">0</span>
+          <span class="leg-count" style="color:var(--high)">3</span>
         </div>
         <div class="leg-item">
           <div class="leg-left"><div class="leg-dot" style="background:var(--med)"></div><span>MEDIUM</span></div>
-          <span class="leg-count" style="color:var(--med)">1</span>
+          <span class="leg-count" style="color:var(--med)">6</span>
         </div>
         <div class="leg-item">
           <div class="leg-left"><div class="leg-dot" style="background:var(--low)"></div><span>LOW</span></div>
-          <span class="leg-count" style="color:var(--low)">14</span>
+          <span class="leg-count" style="color:var(--low)">6</span>
         </div>
       </div>
     </div>
@@ -227,7 +227,7 @@ td.urgent{color:var(--high);font-weight:600}
   <div class="table-hdr">
     <div class="table-hdr-left">
       <span class="tbl-title">Priority Queue</span>
-      <span class="badge-pill">1 accounts</span>
+      <span class="badge-pill">9 accounts</span>
     </div>
     <span class="tbl-hint">sorted: priority &rarr; risk score</span>
   </div>
@@ -248,25 +248,193 @@ td.urgent{color:var(--high);font-weight:600}
     </thead>
     <tbody>
 <tr>
+      <td><span class="pri-badge p1">① CRITICAL</span></td>
+      <td><span class="account-id">acc_001</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$8.5K</td>
+      <td class="num urgent">7d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:84%"></div>
+      </div>
+      <span class="score-num">84</span>
+    </div></td>
+      <td><span class="driver-badge">💰 commercial</span></td>
+      <td><div class="breakdown-bar" title="Usage 88 / Commercial 92 / Support 65">
+      <div class="bd-u" style="width:35.91836734693877%"></div>
+      <div class="bd-c" style="width:37.55102040816327%"></div>
+      <div class="bd-s" style="width:26.53061224489796%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 92%</span></td>
+      <td><span class="trend-down">0%</span></td>
+    </tr>
+<tr>
+      <td><span class="pri-badge p2">② URGENT</span></td>
+      <td><span class="account-id">acc_007</span></td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
+      <td class="num">$3.2K</td>
+      <td class="num urgent">22d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:78%"></div>
+      </div>
+      <span class="score-num">78</span>
+    </div></td>
+      <td><span class="driver-badge">📊 usage</span></td>
+      <td><div class="breakdown-bar" title="Usage 82 / Commercial 80 / Support 65">
+      <div class="bd-u" style="width:36.12334801762114%"></div>
+      <div class="bd-c" style="width:35.24229074889868%"></div>
+      <div class="bd-s" style="width:28.634361233480178%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 67%</span></td>
+      <td><span class="trend-down">10%</span></td>
+    </tr>
+<tr>
+      <td><span class="pri-badge p3">③ HIGH</span></td>
+      <td><span class="account-id">acc_013</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$6.8K</td>
+      <td class="num ">45d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:71%"></div>
+      </div>
+      <span class="score-num">71</span>
+    </div></td>
+      <td><span class="driver-badge">📊 usage</span></td>
+      <td><div class="breakdown-bar" title="Usage 79 / Commercial 72 / Support 55">
+      <div class="bd-u" style="width:38.349514563106794%"></div>
+      <div class="bd-c" style="width:34.95145631067961%"></div>
+      <div class="bd-s" style="width:26.699029126213592%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 58%</span></td>
+      <td><span class="trend-down">15%</span></td>
+    </tr>
+<tr>
       <td><span class="pri-badge p4">④ WATCH</span></td>
       <td><span class="account-id">acc_002</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
       <td class="num">$1.2K</td>
       <td class="num urgent">16d</td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:6px">
-        <div class="score-fill" style="width:63.83%"></div>
+        <div class="score-fill" style="width:64%"></div>
       </div>
       <span class="score-num">64</span>
     </div></td>
-      <td><span class="driver-badge">📊 usage</span></td>
-      <td><div class="breakdown-bar" title="Usage 100 / Commercial 48 / Support 18">
-      <div class="bd-u" style="width:60.30271965265634%"></div>
-      <div class="bd-c" style="width:28.64379183501176%"></div>
-      <div class="bd-s" style="width:11.053488512331906%"></div>
+      <td><span class="driver-badge">💰 commercial</span></td>
+      <td><div class="breakdown-bar" title="Usage 60 / Commercial 78 / Support 48">
+      <div class="bd-u" style="width:32.25806451612903%"></div>
+      <div class="bd-c" style="width:41.935483870967744%"></div>
+      <div class="bd-s" style="width:25.806451612903224%"></div>
     </div></td>
-      <td><span class="trend-down">↓ 50%</span></td>
-      <td><span class="trend-down">0%</span></td>
+      <td><span class="trend-down">↓ 51%</span></td>
+      <td><span class="trend-down">15%</span></td>
+    </tr>
+<tr>
+      <td><span class="pri-badge p4">④ WATCH</span></td>
+      <td><span class="account-id">acc_004</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$9.2K</td>
+      <td class="num urgent">28d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:59%"></div>
+      </div>
+      <span class="score-num">59</span>
+    </div></td>
+      <td><span class="driver-badge">💰 commercial</span></td>
+      <td><div class="breakdown-bar" title="Usage 55 / Commercial 74 / Support 42">
+      <div class="bd-u" style="width:32.16374269005848%"></div>
+      <div class="bd-c" style="width:43.27485380116959%"></div>
+      <div class="bd-s" style="width:24.561403508771928%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 43%</span></td>
+      <td><span class="muted-light">25%</span></td>
+    </tr>
+<tr>
+      <td><span class="pri-badge p4">④ WATCH</span></td>
+      <td><span class="account-id">acc_008</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">Starter</span></td>
+      <td class="num">$850</td>
+      <td class="num ">62d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:52%"></div>
+      </div>
+      <span class="score-num">52</span>
+    </div></td>
+      <td><span class="driver-badge">📊 usage</span></td>
+      <td><div class="breakdown-bar" title="Usage 65 / Commercial 45 / Support 38">
+      <div class="bd-u" style="width:43.91891891891892%"></div>
+      <div class="bd-c" style="width:30.405405405405407%"></div>
+      <div class="bd-s" style="width:25.675675675675674%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 71%</span></td>
+      <td><span class="trend-down">8%</span></td>
+    </tr>
+<tr>
+      <td><span class="pri-badge p4">④ WATCH</span></td>
+      <td><span class="account-id">acc_009</span></td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
+      <td class="num">$2.8K</td>
+      <td class="num ">78d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:48%"></div>
+      </div>
+      <span class="score-num">48</span>
+    </div></td>
+      <td><span class="driver-badge">💰 commercial</span></td>
+      <td><div class="breakdown-bar" title="Usage 42 / Commercial 62 / Support 35">
+      <div class="bd-u" style="width:30.215827338129497%"></div>
+      <div class="bd-c" style="width:44.60431654676259%"></div>
+      <div class="bd-s" style="width:25.179856115107913%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 28%</span></td>
+      <td><span class="muted-light">30%</span></td>
+    </tr>
+<tr>
+      <td><span class="pri-badge p4">④ WATCH</span></td>
+      <td><span class="account-id">acc_012</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">Starter</span></td>
+      <td class="num">$620</td>
+      <td class="num ">55d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:45%"></div>
+      </div>
+      <span class="score-num">45</span>
+    </div></td>
+      <td><span class="driver-badge">📊 usage</span></td>
+      <td><div class="breakdown-bar" title="Usage 58 / Commercial 38 / Support 32">
+      <div class="bd-u" style="width:45.3125%"></div>
+      <div class="bd-c" style="width:29.6875%"></div>
+      <div class="bd-s" style="width:25.0%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 45%</span></td>
+      <td><span class="trend-down">20%</span></td>
+    </tr>
+<tr>
+      <td><span class="pri-badge p4">④ WATCH</span></td>
+      <td><span class="account-id">acc_014</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$7.4K</td>
+      <td class="num ">88d</td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:6px">
+        <div class="score-fill" style="width:41%"></div>
+      </div>
+      <span class="score-num">41</span>
+    </div></td>
+      <td><span class="driver-badge">💰 commercial</span></td>
+      <td><div class="breakdown-bar" title="Usage 38 / Commercial 55 / Support 28">
+      <div class="bd-u" style="width:31.40495867768595%"></div>
+      <div class="bd-c" style="width:45.45454545454545%"></div>
+      <div class="bd-s" style="width:23.140495867768596%"></div>
+    </div></td>
+      <td><span class="trend-down">↓ 15%</span></td>
+      <td><span class="muted-light">40%</span></td>
     </tr>
     </tbody>
   </table>
@@ -302,244 +470,244 @@ td.urgent{color:var(--high);font-weight:600}
     </thead>
     <tbody>
 <tr>
+      <td><span class="account-id">acc_001</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$8.5K</td>
+      <td><span class="tier-badge tier-high">HIGH</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:84%"></div>
+      </div>
+      <span class="score-num">84</span>
+    </div></td>
+      <td class="num muted-light">88</td>
+      <td class="num muted-light">92</td>
+      <td class="num muted-light">65</td>
+      <td class="num urgent">7d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_007</span></td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
+      <td class="num">$3.2K</td>
+      <td><span class="tier-badge tier-high">HIGH</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:78%"></div>
+      </div>
+      <span class="score-num">78</span>
+    </div></td>
+      <td class="num muted-light">82</td>
+      <td class="num muted-light">80</td>
+      <td class="num muted-light">65</td>
+      <td class="num urgent">22d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_013</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$6.8K</td>
+      <td><span class="tier-badge tier-high">HIGH</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:71%"></div>
+      </div>
+      <span class="score-num">71</span>
+    </div></td>
+      <td class="num muted-light">79</td>
+      <td class="num muted-light">72</td>
+      <td class="num muted-light">55</td>
+      <td class="num muted">45d</td>
+    </tr>
+<tr>
       <td><span class="account-id">acc_002</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
       <td class="num">$1.2K</td>
       <td><span class="tier-badge tier-medium">MEDIUM</span></td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:63.83%"></div>
+        <div class="score-fill" style="width:64%"></div>
       </div>
       <span class="score-num">64</span>
     </div></td>
-      <td class="num muted-light">100</td>
+      <td class="num muted-light">60</td>
+      <td class="num muted-light">78</td>
       <td class="num muted-light">48</td>
-      <td class="num muted-light">18</td>
       <td class="num urgent">16d</td>
     </tr>
 <tr>
-      <td><span class="account-id">acc_003</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
-      <td class="num">$400.0</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><span class="account-id">acc_004</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$9.2K</td>
+      <td><span class="tier-badge tier-medium">MEDIUM</span></td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:36.71%"></div>
+        <div class="score-fill" style="width:59%"></div>
       </div>
-      <span class="score-num">37</span>
+      <span class="score-num">59</span>
     </div></td>
-      <td class="num muted-light">22</td>
-      <td class="num muted-light">65</td>
-      <td class="num muted-light">28</td>
-      <td class="num urgent">12d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_006</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
-      <td class="num">$350.0</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:32.08%"></div>
-      </div>
-      <span class="score-num">32</span>
-    </div></td>
-      <td class="num muted-light">22</td>
-      <td class="num muted-light">29</td>
-      <td class="num muted-light">53</td>
-      <td class="num muted">71d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_014</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
-      <td class="num">$1.1K</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:31.04%"></div>
-      </div>
-      <span class="score-num">31</span>
-    </div></td>
-      <td class="num muted-light">22</td>
-      <td class="num muted-light">60</td>
-      <td class="num muted-light">12</td>
-      <td class="num urgent">29d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_001</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
-      <td class="num">$4.8K</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:26.77%"></div>
-      </div>
-      <span class="score-num">27</span>
-    </div></td>
-      <td class="num muted-light">9</td>
-      <td class="num muted-light">52</td>
-      <td class="num muted-light">28</td>
-      <td class="num urgent">4d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_011</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
-      <td class="num">$6.0K</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:26.08%"></div>
-      </div>
-      <span class="score-num">26</span>
-    </div></td>
-      <td class="num muted-light">35</td>
-      <td class="num muted-light">15</td>
-      <td class="num muted-light">23</td>
-      <td class="num muted">214d</td>
+      <td class="num muted-light">55</td>
+      <td class="num muted-light">74</td>
+      <td class="num muted-light">42</td>
+      <td class="num urgent">28d</td>
     </tr>
 <tr>
       <td><span class="account-id">acc_008</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
-      <td class="num">$5.2K</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">Starter</span></td>
+      <td class="num">$850</td>
+      <td><span class="tier-badge tier-medium">MEDIUM</span></td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:26.08%"></div>
+        <div class="score-fill" style="width:52%"></div>
       </div>
-      <span class="score-num">26</span>
+      <span class="score-num">52</span>
     </div></td>
-      <td class="num muted-light">35</td>
-      <td class="num muted-light">15</td>
-      <td class="num muted-light">23</td>
-      <td class="num muted">139d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_012</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
-      <td class="num">$870.0</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:23.25%"></div>
-      </div>
-      <span class="score-num">23</span>
-    </div></td>
-      <td class="num muted-light">22</td>
-      <td class="num muted-light">44</td>
-      <td class="num muted-light">0</td>
-      <td class="num muted">84d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_015</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
-      <td class="num">$4.1K</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:23.17%"></div>
-      </div>
-      <span class="score-num">23</span>
-    </div></td>
-      <td class="num muted-light">22</td>
-      <td class="num muted-light">34</td>
-      <td class="num muted-light">12</td>
-      <td class="num muted">49d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_005</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">enterprise</span></td>
-      <td class="num">$3.2K</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:20.25%"></div>
-      </div>
-      <span class="score-num">20</span>
-    </div></td>
-      <td class="num muted-light">22</td>
-      <td class="num muted-light">34</td>
-      <td class="num muted-light">0</td>
-      <td class="num muted">56d</td>
-    </tr>
-<tr>
-      <td><span class="account-id">acc_013</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
-      <td class="num">$310.0</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
-      <td><div class="score-bar-wrap">
-      <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:19.9%"></div>
-      </div>
-      <span class="score-num">20</span>
-    </div></td>
-      <td class="num muted-light">21</td>
-      <td class="num muted-light">15</td>
-      <td class="num muted-light">23</td>
-      <td class="num muted">294d</td>
+      <td class="num muted-light">65</td>
+      <td class="num muted-light">45</td>
+      <td class="num muted-light">38</td>
+      <td class="num muted">62d</td>
     </tr>
 <tr>
       <td><span class="account-id">acc_009</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">starter</span></td>
-      <td class="num">$290.0</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
+      <td class="num">$2.8K</td>
+      <td><span class="tier-badge tier-medium">MEDIUM</span></td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:19.9%"></div>
+        <div class="score-fill" style="width:48%"></div>
       </div>
-      <span class="score-num">20</span>
+      <span class="score-num">48</span>
     </div></td>
-      <td class="num muted-light">21</td>
-      <td class="num muted-light">15</td>
-      <td class="num muted-light">23</td>
-      <td class="num muted">189d</td>
+      <td class="num muted-light">42</td>
+      <td class="num muted-light">62</td>
+      <td class="num muted-light">35</td>
+      <td class="num muted">78d</td>
     </tr>
 <tr>
-      <td><span class="account-id">acc_007</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
-      <td class="num">$980.0</td>
-      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><span class="account-id">acc_012</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">Starter</span></td>
+      <td class="num">$620</td>
+      <td><span class="tier-badge tier-medium">MEDIUM</span></td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:17.08%"></div>
+        <div class="score-fill" style="width:45%"></div>
       </div>
-      <span class="score-num">17</span>
+      <span class="score-num">45</span>
     </div></td>
-      <td class="num muted-light">15</td>
-      <td class="num muted-light">15</td>
-      <td class="num muted-light">23</td>
-      <td class="num muted">109d</td>
+      <td class="num muted-light">58</td>
+      <td class="num muted-light">38</td>
+      <td class="num muted-light">32</td>
+      <td class="num muted">55d</td>
     </tr>
 <tr>
-      <td><span class="account-id">acc_004</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
-      <td class="num">$1.6K</td>
+      <td><span class="account-id">acc_014</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$7.4K</td>
+      <td><span class="tier-badge tier-medium">MEDIUM</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:41%"></div>
+      </div>
+      <span class="score-num">41</span>
+    </div></td>
+      <td class="num muted-light">38</td>
+      <td class="num muted-light">55</td>
+      <td class="num muted-light">28</td>
+      <td class="num muted">88d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_003</span></td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
+      <td class="num">$2.4K</td>
       <td><span class="tier-badge tier-low">LOW</span></td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:16.4%"></div>
+        <div class="score-fill" style="width:32%"></div>
       </div>
-      <span class="score-num">16</span>
+      <span class="score-num">32</span>
     </div></td>
-      <td class="num muted-light">9</td>
-      <td class="num muted-light">26</td>
-      <td class="num muted-light">18</td>
-      <td class="num muted">42d</td>
+      <td class="num muted-light">28</td>
+      <td class="num muted-light">42</td>
+      <td class="num muted-light">22</td>
+      <td class="num muted">120d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_005</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$11.2K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:28%"></div>
+      </div>
+      <span class="score-num">28</span>
+    </div></td>
+      <td class="num muted-light">22</td>
+      <td class="num muted-light">38</td>
+      <td class="num muted-light">25</td>
+      <td class="num muted">95d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_006</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">Starter</span></td>
+      <td class="num">$480</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:18%"></div>
+      </div>
+      <span class="score-num">18</span>
+    </div></td>
+      <td class="num muted-light">15</td>
+      <td class="num muted-light">28</td>
+      <td class="num muted-light">12</td>
+      <td class="num muted">180d</td>
     </tr>
 <tr>
       <td><span class="account-id">acc_010</span></td>
-      <td><span class="plan-badge" style="color:#94a3b8">growth</span></td>
-      <td class="num">$1.4K</td>
+      <td><span class="plan-badge" style="color:#34d399">Growth</span></td>
+      <td class="num">$1.8K</td>
       <td><span class="tier-badge tier-low">LOW</span></td>
       <td><div class="score-bar-wrap">
       <div class="score-bar" style="height:4px">
-        <div class="score-fill" style="width:14.27%"></div>
+        <div class="score-fill" style="width:15%"></div>
       </div>
-      <span class="score-num">14</span>
+      <span class="score-num">15</span>
     </div></td>
-      <td class="num muted-light">9</td>
-      <td class="num muted-light">15</td>
-      <td class="num muted-light">23</td>
-      <td class="num muted">169d</td>
+      <td class="num muted-light">12</td>
+      <td class="num muted-light">20</td>
+      <td class="num muted-light">10</td>
+      <td class="num muted">200d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_011</span></td>
+      <td><span class="plan-badge" style="color:#818cf8">Enterprise</span></td>
+      <td class="num">$5.6K</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:11%"></div>
+      </div>
+      <span class="score-num">11</span>
+    </div></td>
+      <td class="num muted-light">8</td>
+      <td class="num muted-light">18</td>
+      <td class="num muted-light">8</td>
+      <td class="num muted">155d</td>
+    </tr>
+<tr>
+      <td><span class="account-id">acc_015</span></td>
+      <td><span class="plan-badge" style="color:#94a3b8">Starter</span></td>
+      <td class="num">$390</td>
+      <td><span class="tier-badge tier-low">LOW</span></td>
+      <td><div class="score-bar-wrap">
+      <div class="score-bar" style="height:4px">
+        <div class="score-fill" style="width:8%"></div>
+      </div>
+      <span class="score-num">8</span>
+    </div></td>
+      <td class="num muted-light">6</td>
+      <td class="num muted-light">14</td>
+      <td class="num muted-light">5</td>
+      <td class="num muted">220d</td>
     </tr>
     </tbody>
   </table>
@@ -561,7 +729,7 @@ new Chart(donutCtx, {
   data: {
     labels: ['HIGH', 'MEDIUM', 'LOW'],
     datasets: [{
-      data: [0, 1, 14],
+      data: [3, 6, 6],
       backgroundColor: ['rgba(240,64,64,0.8)','rgba(245,166,35,0.8)','rgba(46,204,129,0.7)'],
       borderColor: ['#f04040','#f5a623','#2ecc81'],
       borderWidth: 1,
@@ -586,7 +754,7 @@ new Chart(donutCtx, {
 
 // ── Bubble / scatter chart ──
 const scatterCtx = document.getElementById('scatter');
-const pts = [{"id": "acc_002", "days": 16, "score": 63.8, "tier": "MEDIUM", "mrr": 1200.0, "r": 4}, {"id": "acc_003", "days": 12, "score": 36.7, "tier": "LOW", "mrr": 400.0, "r": 4}, {"id": "acc_006", "days": 71, "score": 32.1, "tier": "LOW", "mrr": 350.0, "r": 4}, {"id": "acc_014", "days": 29, "score": 31.0, "tier": "LOW", "mrr": 1100.0, "r": 4}, {"id": "acc_001", "days": 4, "score": 26.8, "tier": "LOW", "mrr": 4800.0, "r": 4}, {"id": "acc_011", "days": 214, "score": 26.1, "tier": "LOW", "mrr": 6000.0, "r": 4}, {"id": "acc_008", "days": 139, "score": 26.1, "tier": "LOW", "mrr": 5200.0, "r": 4}, {"id": "acc_012", "days": 84, "score": 23.2, "tier": "LOW", "mrr": 870.0, "r": 4}, {"id": "acc_015", "days": 49, "score": 23.2, "tier": "LOW", "mrr": 4100.0, "r": 4}, {"id": "acc_005", "days": 56, "score": 20.2, "tier": "LOW", "mrr": 3200.0, "r": 4}, {"id": "acc_013", "days": 294, "score": 19.9, "tier": "LOW", "mrr": 310.0, "r": 4}, {"id": "acc_009", "days": 189, "score": 19.9, "tier": "LOW", "mrr": 290.0, "r": 4}, {"id": "acc_007", "days": 109, "score": 17.1, "tier": "LOW", "mrr": 980.0, "r": 4}, {"id": "acc_004", "days": 42, "score": 16.4, "tier": "LOW", "mrr": 1600.0, "r": 4}, {"id": "acc_010", "days": 169, "score": 14.3, "tier": "LOW", "mrr": 1450.0, "r": 4}];
+const pts = [{"id": "acc_001", "days": 7, "score": 84, "tier": "HIGH", "mrr": 8500, "r": 4.6}, {"id": "acc_007", "days": 22, "score": 78, "tier": "HIGH", "mrr": 3200, "r": 4}, {"id": "acc_013", "days": 45, "score": 71, "tier": "HIGH", "mrr": 6800, "r": 4.1}, {"id": "acc_002", "days": 16, "score": 64, "tier": "MEDIUM", "mrr": 1200, "r": 4}, {"id": "acc_004", "days": 28, "score": 59, "tier": "MEDIUM", "mrr": 9200, "r": 4.8}, {"id": "acc_008", "days": 62, "score": 52, "tier": "MEDIUM", "mrr": 850, "r": 4}, {"id": "acc_009", "days": 78, "score": 48, "tier": "MEDIUM", "mrr": 2800, "r": 4}, {"id": "acc_012", "days": 55, "score": 45, "tier": "MEDIUM", "mrr": 620, "r": 4}, {"id": "acc_014", "days": 88, "score": 41, "tier": "MEDIUM", "mrr": 7400, "r": 4.3}, {"id": "acc_003", "days": 120, "score": 32, "tier": "LOW", "mrr": 2400, "r": 4}, {"id": "acc_005", "days": 95, "score": 28, "tier": "LOW", "mrr": 11200, "r": 5.3}, {"id": "acc_006", "days": 180, "score": 18, "tier": "LOW", "mrr": 480, "r": 4}, {"id": "acc_010", "days": 200, "score": 15, "tier": "LOW", "mrr": 1800, "r": 4}, {"id": "acc_011", "days": 155, "score": 11, "tier": "LOW", "mrr": 5600, "r": 4}, {"id": "acc_015", "days": 220, "score": 8, "tier": "LOW", "mrr": 390, "r": 4}];
 
 const dangerZone = {
   id: 'dangerZone',

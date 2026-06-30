@@ -13,3 +13,15 @@ sources:
         description: Raw billing lifecycle events (payments, upgrades, downgrades).
       - name: support_tickets
         description: Raw support tickets from helpdesk.
+
+  - name: ml_output
+    description: >
+      ML model predictions written by scripts/ml_pipeline.py.
+      Populated by running: python scripts/ml_pipeline.py score --db dev.duckdb
+    database: "{{ var('raw_database', 'dev') }}"
+    schema: ml_output
+    tables:
+      - name: ml_predictions
+        description: >
+          Current-week ML churn scores per account. One row per account_id.
+          Includes risk_score_ml (0-100), risk_tier_ml, churn_probability, model_name.
